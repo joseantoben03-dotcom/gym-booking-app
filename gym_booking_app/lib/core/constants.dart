@@ -1,30 +1,27 @@
 import 'package:flutter/foundation.dart';
 
 class AppConstants {
-  // ─── AUTO-DETECTED BASE URL PER PLATFORM ────────────────────────────────────
-  //
-  // Web & Desktop (Windows/macOS/Linux) → backend runs on localhost
-  // Android Emulator                    → 10.0.2.2 maps to host machine
-  // iOS Simulator                       → localhost works fine
-  // Physical device (any)               → set YOUR_PC_IP below
-  //
-  // For physical devices, replace with your machine's local IP (run `ipconfig`
-  // on Windows or `ifconfig` on Mac/Linux to find it).
-  static const String _physicalDeviceIp = '192.168.1.100'; // ← change this
+  // ─── PRODUCTION URL ───────────────────────────────────────────────────────
+  // After deploying backend to Vercel, set this to your Vercel URL.
+  // e.g. 'https://gymbook-backend.vercel.app/api'
+  static const String _productionUrl = 'https://YOUR-PROJECT.vercel.app/api';
 
+  // ─── LOCAL DEV URLs ───────────────────────────────────────────────────────
+  static const String _physicalDeviceIp = '192.168.1.100'; // ← your PC's local IP
+
+  // ─── AUTO-DETECT ──────────────────────────────────────────────────────────
   static String get baseUrl {
-    if (kIsWeb) {
-      // Web runs in browser on same machine as backend
-      return 'http://localhost:5000/api';
-    }
+    // Toggle this to true once you have deployed to Vercel
+    const bool useProduction = false; // ← change to true after Vercel deploy
+
+    if (useProduction) return _productionUrl;
+
+    if (kIsWeb) return 'http://localhost:5000/api';
+
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
-        // 10.0.2.2 = host machine from Android emulator
-        // If on physical Android device, swap to _physicalDeviceIp
         return 'http://10.0.2.2:5000/api';
       case TargetPlatform.iOS:
-        // localhost works for iOS simulator
-        // If on physical iOS device, swap to _physicalDeviceIp
         return 'http://localhost:5000/api';
       case TargetPlatform.windows:
       case TargetPlatform.macOS:
@@ -37,9 +34,9 @@ class AppConstants {
 
   // Storage keys
   static const String tokenKey = 'auth_token';
-  static const String userKey = 'auth_user';
+  static const String userKey  = 'auth_user';
 
-  // Timeouts (milliseconds)
+  // Timeouts
   static const int connectTimeout = 15000;
   static const int receiveTimeout = 15000;
 }
