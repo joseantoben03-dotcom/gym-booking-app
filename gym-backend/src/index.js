@@ -10,22 +10,16 @@ const adminRoutes   = require('./routes/admin.routes');
 
 const app = express();
 
-// Connect to MongoDB
+// ─── MongoDB ───────────────────────────────────────────────────────────────────
 connectDB();
 
 // ─── CORS ─────────────────────────────────────────────────────────────────────
-// In production, set ALLOWED_ORIGIN in Vercel env vars to your frontend URL.
-// e.g. ALLOWED_ORIGIN=https://gymbook.vercel.app
-// For development and mobile apps, allow all origins.
-const allowedOrigin = process.env.ALLOWED_ORIGIN || '*';
-
 const corsOptions = {
-  origin: allowedOrigin,
+  origin: '*',
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: allowedOrigin !== '*',
+  credentials: false,
 };
-
 app.use(cors(corsOptions));
 app.options('*', cors(corsOptions));
 
@@ -41,16 +35,15 @@ app.use('/api/admin',    adminRoutes);
 
 // ─── Health check ─────────────────────────────────────────────────────────────
 app.get('/api/health', (req, res) => {
-  res.json({
-    status: 'OK',
-    message: 'Gym Booking API is running',
-    env: process.env.NODE_ENV || 'development',
-  });
+  res.json({ status: 'OK', message: 'Gym Booking API is running' });
 });
 
 // ─── 404 ──────────────────────────────────────────────────────────────────────
 app.use((req, res) => {
-  res.status(404).json({ success: false, message: `Route ${req.originalUrl} not found` });
+  res.status(404).json({
+    success: false,
+    message: `Route ${req.originalUrl} not found`,
+  });
 });
 
 // ─── Global error handler ─────────────────────────────────────────────────────
@@ -62,13 +55,16 @@ app.use((err, req, res, next) => {
   });
 });
 
-// ─── Start server (local only — Vercel handles this automatically) ─────────────
-if (process.env.NODE_ENV !== 'production') {
+// ─── Local dev server ─────────────────────────────────────────────────────────
+// Vercel is serverless — it does NOT use app.listen().
+// This block only runs when you do `npm run dev` locally.
+if (require.main === module) {
   const PORT = process.env.PORT || 5000;
   app.listen(PORT, '0.0.0.0', () => {
-    console.log(`✅ Server running on http://0.0.0.0:${PORT}`);
+    console.log(`✅ Server running on http://localhost:${PORT}`);
     console.log(`   Health: http://localhost:${PORT}/api/health`);
   });
 }
 
+// ─── IMPORTANT: export app for Vercel serverless ──────────────────────────────
 module.exports = app;
