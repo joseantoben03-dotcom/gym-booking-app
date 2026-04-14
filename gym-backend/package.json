@@ -2,7 +2,10 @@
   "name": "gym-backend",
   "version": "1.0.0",
   "description": "Gym Slot Booking Backend API",
-  "main": "src/index.js",
+  "main": "src/app.js",
+  "engines": {
+    "node": ">=18.x"
+  },
   "scripts": {
     "start": "node src/index.js",
     "dev": "nodemon src/index.js"
